@@ -26,14 +26,14 @@ extension MainController: UITableViewDelegate, UITableViewDataSource{
         cell.lblViewCount.text = "Просмотров \(product.view_count!)"
         cell.titleProduct.text = product.name
         if product.image?.url != nil{
-        let url = URL(string: (product.image?.url! ?? "error")!)
-        if url != nil{
-            cell.imageHeigth.constant = CGFloat((product.image?.height)!)*(cell.imageProduct.frame.size.width/CGFloat((product.image?.width)!))
-            cell.imageProduct.kf.setImage(with: url!)
-        }
+            let url = URL(string: (product.image?.url! ?? "error")!)
+            if url != nil{
+                cell.imageHeigth.constant = CGFloat((product.image?.height)!)*(cell.imageProduct.frame.size.width/CGFloat((product.image?.width)!))
+                cell.imageProduct.kf.setImage(with: url!)
+            }
         }else{
-             cell.imageProduct.image = #imageLiteral(resourceName: "default")
-             cell.imageHeigth.constant = cell.imageProduct.frame.size.width
+            cell.imageProduct.image = #imageLiteral(resourceName: "default")
+            cell.imageHeigth.constant = cell.imageProduct.frame.size.width
         }
         DispatchQueue.global(qos: .default).async {
             if product.image?.url != nil{
@@ -48,10 +48,12 @@ extension MainController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == products.count - 1 && isLoad && nextUrl != nil{
-            Network.loadProductsByUrl(url: nextUrl!, method: { (product, error) in
-                self.loadProducts(products: product!)
-                self.isLoad = false
-        })
+            DispatchQueue.global(qos: .default).async{
+                Network.loadProductsByUrl(url: self.nextUrl!, method: { (product, error) in
+                    self.loadProducts(products: product!)
+                    self.isLoad = false
+                })
+            }
         }
     }
     

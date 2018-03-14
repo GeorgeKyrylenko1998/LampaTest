@@ -21,21 +21,23 @@ class MainController: UIViewController {
         super.viewDidLoad()
         topCell = productsTable.dequeueReusableCell(withIdentifier: "topCell") as! TopProductCell
         self.title = "Продукты"
-        Network.loadProducts { (product, error) in
-            if error == nil{
-                self.loadProducts(products: product!)
-            } else {
-                let alert = UIAlertController(title: "Проблема с загрузкой данных", message: error?.localizedDescription, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        DispatchQueue.global(qos: .default).async{
+            Network.loadProducts { (product, error) in
+                if error == nil{
+                    self.loadProducts(products: product!)
+                } else {
+                    let alert = UIAlertController(title: "Проблема с загрузкой данных", message: error?.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                }
             }
         }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     
     
     @IBAction func upPress(_ sender: UIButton) {
